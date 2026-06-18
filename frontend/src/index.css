@@ -1,0 +1,490 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* ── Light Mode — High Contrast ── */
+    --background:             0 0% 98%;
+    --foreground:             220 40% 8%;
+    --card:                   0 0% 100%;
+    --card-foreground:        220 40% 8%;
+    --popover:                0 0% 100%;
+    --popover-foreground:     220 40% 8%;
+    --primary:                142 65% 28%;
+    --primary-foreground:     0 0% 100%;
+    --secondary:              220 14% 93%;
+    --secondary-foreground:   220 40% 8%;
+    --muted:                  220 14% 93%;
+    --muted-foreground:       220 14% 38%;
+    --accent:                 220 14% 93%;
+    --accent-foreground:      220 40% 8%;
+    --destructive:            0 84% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border:                 220 14% 78%;
+    --input:                  220 14% 78%;
+    --ring:                   142 65% 28%;
+    --radius:                 0.5rem;
+  }
+
+  .dark {
+    /* ── Dark Mode ── */
+    --background:             224 40% 5%;
+    --foreground:             210 35% 95%;
+    --card:                   224 36% 9%;
+    --card-foreground:        210 35% 95%;
+    --popover:                224 36% 9%;
+    --popover-foreground:     210 35% 95%;
+    --primary:                142 65% 44%;
+    --primary-foreground:     0 0% 100%;
+    --secondary:              224 28% 14%;
+    --secondary-foreground:   210 35% 95%;
+    --muted:                  224 28% 14%;
+    --muted-foreground:       220 18% 58%;
+    --accent:                 224 28% 14%;
+    --accent-foreground:      210 35% 95%;
+    --destructive:            0 60% 35%;
+    --destructive-foreground: 0 0% 100%;
+    --border:                 224 28% 18%;
+    --input:                  224 28% 18%;
+    --ring:                   142 65% 44%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+    box-sizing:   border-box;
+  }
+
+  html {
+    scroll-behavior:          smooth;
+    -webkit-font-smoothing:   antialiased;
+    -moz-osx-font-smoothing:  grayscale;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color:            hsl(var(--foreground));
+    line-height:      1.6;
+  }
+}
+
+/* ─── Glass ─────────────────────────────────── */
+.glass {
+  background:              rgba(255, 255, 255, 0.06);
+  backdrop-filter:         blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border:                  1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ─── Glow ───────────────────────────────────── */
+.glow-text {
+  text-shadow: 0 0 20px rgba(34, 197, 94, 0.45);
+}
+
+:root:not(.dark) .glow-text {
+  text-shadow: none;
+  color:       hsl(var(--primary));
+}
+
+.glow-border {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
+}
+
+:root:not(.dark) .glow-border {
+  box-shadow:   0 2px 8px rgba(0,0,0,0.08);
+  border-color: hsl(var(--border));
+}
+
+/* ─── Animations ─────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px);   }
+  50%       { transform: translateY(-10px); }
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0);    }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-fade-in { animation: fade-in 0.6s ease forwards; opacity: 0; }
+.animate-float   { animation: float 3s ease-in-out infinite;           }
+.animate-marquee { animation: marquee 30s linear infinite;              }
+
+.animation-delay-100 { animation-delay: 0.1s; }
+.animation-delay-200 { animation-delay: 0.2s; }
+.animation-delay-300 { animation-delay: 0.3s; }
+.animation-delay-400 { animation-delay: 0.4s; }
+.animation-delay-500 { animation-delay: 0.5s; }
+.animation-delay-600 { animation-delay: 0.6s; }
+.animation-delay-800 { animation-delay: 0.8s; }
+
+/* ═══════════════════════════════════════════════
+   LIGHT MODE — DEEP FIXES
+═══════════════════════════════════════════════ */
+
+/* ── Navbar ── */
+:root:not(.dark) nav {
+  background:    rgba(255, 255, 255, 0.97) !important;
+  border-bottom: 1px solid hsl(220 14% 82%) !important;
+  box-shadow:    0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* ── Cards ── */
+:root:not(.dark) .bg-card {
+  background: #ffffff;
+}
+
+/* ── Text ── */
+:root:not(.dark) .text-foreground {
+  color: hsl(220 40% 8%);
+}
+
+:root:not(.dark) .text-muted-foreground {
+  color: hsl(220 14% 36%);
+}
+
+/* ── Borders — Make ALL borders visible ── */
+:root:not(.dark) .border-border {
+  border-color: hsl(220 14% 76%) !important;
+}
+
+:root:not(.dark) .border-border\/60 {
+  border-color: hsl(220 14% 76%) !important;
+}
+
+:root:not(.dark) .border-border\/40 {
+  border-color: hsl(220 14% 80%) !important;
+}
+
+:root:not(.dark) .border-border\/50 {
+  border-color: hsl(220 14% 78%) !important;
+}
+
+/* ── Dashed borders on upload zones ── */
+:root:not(.dark) .border-dashed {
+  border-color: hsl(220 14% 65%) !important;
+}
+
+/* ── Primary tint backgrounds ── */
+:root:not(.dark) .bg-primary\/5  { background: hsl(142 50% 95%); }
+:root:not(.dark) .bg-primary\/10 { background: hsl(142 50% 91%); }
+:root:not(.dark) .bg-primary\/20 { background: hsl(142 50% 84%); }
+
+/* ── Muted background ── */
+:root:not(.dark) .bg-muted {
+  background: hsl(220 14% 93%);
+}
+
+/* ── Input fields ── */
+:root:not(.dark) input,
+:root:not(.dark) textarea,
+:root:not(.dark) select {
+  background:   #ffffff !important;
+  border-color: hsl(220 14% 74%) !important;
+  color:        hsl(220 40% 8%) !important;
+}
+
+:root:not(.dark) input:focus,
+:root:not(.dark) textarea:focus {
+  border-color: hsl(var(--primary)) !important;
+  box-shadow:   0 0 0 3px hsl(var(--primary) / 0.12) !important;
+}
+
+/* ── Card shadows in light mode ── */
+:root:not(.dark) .shadow-xl {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.10),
+              0 2px 8px rgba(0,0,0,0.06) !important;
+}
+
+:root:not(.dark) .shadow-lg {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08),
+              0 1px 4px rgba(0,0,0,0.05) !important;
+}
+
+/* ── Semi-transparent backgrounds ── */
+:root:not(.dark) .bg-background\/40,
+:root:not(.dark) .bg-background\/60,
+:root:not(.dark) .bg-background\/80 {
+  background: rgba(255, 255, 255, 0.92) !important;
+}
+
+/* ── Dropdown menus ── */
+:root:not(.dark) [data-radix-popper-content-wrapper] > div {
+  background: #ffffff !important;
+  border:     1px solid hsl(220 14% 78%) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12) !important;
+}
+
+/* ── Scan page specific ── */
+
+/* Upload zone dashed border */
+:root:not(.dark) .border-dashed.border-border,
+:root:not(.dark) [class*="border-dashed"] {
+  border-color: hsl(220 14% 60%) !important;
+}
+
+/* Mode selector cards */
+:root:not(.dark) .border-2.border-border {
+  border-color: hsl(220 14% 72%) !important;
+}
+
+/* Green production mode card in light */
+:root:not(.dark) .border-green-500 {
+  border-color: hsl(142 65% 32%) !important;
+  background:   hsl(142 50% 95%) !important;
+}
+
+:root:not(.dark) .border-purple-500 {
+  border-color: #7c3aed !important;
+  background:   hsl(270 60% 96%) !important;
+}
+
+/* Tip box yellow in light */
+:root:not(.dark) .bg-yellow-500\/10 {
+  background: hsl(45 90% 92%) !important;
+}
+
+:root:not(.dark) .border-yellow-500\/20 {
+  border-color: hsl(45 80% 70%) !important;
+}
+
+/* Purple research info box */
+:root:not(.dark) .bg-purple-500\/10 {
+  background: hsl(270 60% 95%) !important;
+}
+
+:root:not(.dark) .border-purple-500\/20 {
+  border-color: hsl(270 50% 78%) !important;
+}
+
+/* Health profile buttons */
+:root:not(.dark) .bg-blue-500\/10   { background: hsl(210 80% 94%); }
+:root:not(.dark) .bg-orange-500\/10 { background: hsl(25 90% 93%);  }
+:root:not(.dark) .bg-gray-500\/10   { background: hsl(220 14% 92%); }
+:root:not(.dark) .bg-pink-500\/10   { background: hsl(340 80% 94%); }
+
+/* Card dark mode */
+.dark .bg-card {
+  background: hsl(224 36% 9%);
+}
+
+/* Dropdown dark */
+.dark [data-radix-popper-content-wrapper] > div {
+  background: hsl(224 36% 9%) !important;
+  border:     1px solid hsl(224 28% 18%) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: hsl(var(--muted)); }
+::-webkit-scrollbar-thumb {
+  background:    hsl(var(--primary) / 0.4);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.7);
+}
+
+/* ══════════════════════════════════════════════
+   HEALTH CONDITION CARD COLORS — LIGHT MODE FIX
+   React.dev approach: solid colors, not opacity
+══════════════════════════════════════════════ */
+
+/* Yellow — Lactose Intolerant (most broken) */
+:root:not(.dark) .bg-yellow-500\/10 {
+  background: #fef3c7 !important; /* amber-100 — solid visible yellow */
+}
+:root:not(.dark) .border-yellow-500 {
+  border-color: #d97706 !important; /* amber-600 */
+}
+:root:not(.dark) .text-yellow-600 {
+  color: #92400e !important; /* amber-900 — dark enough to read */
+}
+:root:not(.dark) .text-yellow-500 {
+  color: #b45309 !important;
+}
+:root:not(.dark) .border-yellow-400\/50 {
+  border-color: #d97706 !important;
+}
+
+/* Blue — Diabetic */
+:root:not(.dark) .bg-blue-500\/10 {
+  background: #dbeafe !important; /* blue-100 */
+}
+:root:not(.dark) .border-blue-500 {
+  border-color: #2563eb !important;
+}
+:root:not(.dark) .text-blue-700 {
+  color: #1e3a8a !important; /* blue-900 */
+}
+:root:not(.dark) .border-blue-400\/50 {
+  border-color: #3b82f6 !important;
+}
+
+/* Orange — Hypertensive */
+:root:not(.dark) .bg-orange-500\/10 {
+  background: #ffedd5 !important; /* orange-100 */
+}
+:root:not(.dark) .border-orange-500 {
+  border-color: #ea580c !important;
+}
+:root:not(.dark) .text-orange-700 {
+  color: #7c2d12 !important;
+}
+:root:not(.dark) .border-orange-400\/50 {
+  border-color: #f97316 !important;
+}
+
+/* Purple — PKU */
+:root:not(.dark) .bg-purple-500\/10 {
+  background: #ede9fe !important; /* violet-100 */
+}
+:root:not(.dark) .border-purple-500 {
+  border-color: #7c3aed !important;
+}
+:root:not(.dark) .text-purple-700 {
+  color: #4c1d95 !important;
+}
+:root:not(.dark) .border-purple-400\/50 {
+  border-color: #8b5cf6 !important;
+}
+
+/* Pink — Pregnant */
+:root:not(.dark) .bg-pink-500\/10 {
+  background: #fce7f3 !important; /* pink-100 */
+}
+:root:not(.dark) .border-pink-500 {
+  border-color: #ec4899 !important;
+}
+:root:not(.dark) .text-pink-700 {
+  color: #831843 !important;
+}
+:root:not(.dark) .border-pink-400\/50 {
+  border-color: #f472b6 !important;
+}
+
+/* Rose — PCOS */
+:root:not(.dark) .bg-rose-500\/10 {
+  background: #ffe4e6 !important; /* rose-100 */
+}
+:root:not(.dark) .border-rose-500 {
+  border-color: #e11d48 !important;
+}
+:root:not(.dark) .text-rose-700 {
+  color: #881337 !important;
+}
+:root:not(.dark) .border-rose-400\/50 {
+  border-color: #fb7185 !important;
+}
+
+/* Amber — Celiac */
+:root:not(.dark) .bg-amber-500\/10 {
+  background: #fef3c7 !important; /* amber-100 */
+}
+:root:not(.dark) .border-amber-500 {
+  border-color: #d97706 !important;
+}
+:root:not(.dark) .text-amber-700 {
+  color: #78350f !important;
+}
+:root:not(.dark) .border-amber-400\/50 {
+  border-color: #f59e0b !important;
+}
+
+/* Red — Heart/CVD */
+:root:not(.dark) .bg-red-500\/10 {
+  background: #fee2e2 !important; /* red-100 */
+}
+:root:not(.dark) .border-red-500 {
+  border-color: #dc2626 !important;
+}
+:root:not(.dark) .text-red-700 {
+  color: #7f1d1d !important;
+}
+:root:not(.dark) .border-red-400\/50 {
+  border-color: #ef4444 !important;
+}
+
+/* Teal — IBS */
+:root:not(.dark) .bg-teal-500\/10 {
+  background: #ccfbf1 !important; /* teal-100 */
+}
+:root:not(.dark) .border-teal-500 {
+  border-color: #0d9488 !important;
+}
+:root:not(.dark) .text-teal-700 {
+  color: #134e4a !important;
+}
+:root:not(.dark) .border-teal-400\/50 {
+  border-color: #14b8a6 !important;
+}
+
+/* Indigo — Uric Acid */
+:root:not(.dark) .bg-indigo-500\/10 {
+  background: #e0e7ff !important; /* indigo-100 */
+}
+:root:not(.dark) .border-indigo-500 {
+  border-color: #4338ca !important;
+}
+:root:not(.dark) .text-indigo-700 {
+  color: #1e1b4b !important;
+}
+:root:not(.dark) .border-indigo-400\/50 {
+  border-color: #6366f1 !important;
+}
+
+/* Gray — No Condition */
+:root:not(.dark) .bg-gray-500\/10 {
+  background: #f3f4f6 !important; /* gray-100 */
+}
+:root:not(.dark) .border-gray-400\/40 {
+  border-color: #9ca3af !important;
+}
+:root:not(.dark) .text-gray-600 {
+  color: #374151 !important;
+}
+
+/* ── Results page colored cards ── */
+:root:not(.dark) .bg-green-500\/10 {
+  background: #dcfce7 !important;
+}
+:root:not(.dark) .border-green-500\/30 {
+  border-color: #16a34a !important;
+}
+:root:not(.dark) .bg-red-500\/5,
+:root:not(.dark) .bg-red-600\/10 {
+  background: #fef2f2 !important;
+}
+:root:not(.dark) .bg-orange-500\/10 {
+  background: #ffedd5 !important;
+}
+
+/* Purple research mode badge */
+:root:not(.dark) .bg-purple-500\/10 {
+  background: #ede9fe !important;
+}
+:root:not(.dark) .border-purple-500\/20,
+:root:not(.dark) .border-purple-500\/30 {
+  border-color: #7c3aed !important;
+}
+:root:not(.dark) .text-purple-500 {
+  color: #6d28d9 !important;
+}
+
+/* ── Animated Gradient Buttons ─────────────────── */
+@keyframes gradientMove {
+  0%   { background-position: 0% 50%;   }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%;   }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientMove 3s ease infinite;
+}
