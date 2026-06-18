@@ -1,25 +1,17 @@
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.requests import Request
-from starlette.responses import Response
-from routes import auth, scan, profile
-from database import connect_db
 import os
 import json
 
-# ── Firebase Init ─────────────────────────────
-# Reads from env variable on Render (deployed)
-# Falls back to file for local development
+# ── Firebase MUST init before any route imports ──
+# Routes import firebase_admin on load — if it's not
+# initialized yet, they crash looking for the file
 import firebase_admin
 from firebase_admin import credentials
 
 def init_firebase():
     if firebase_admin._apps:
-        # Already initialized — skip
         return
 
-    # Try env variable first (Render deployment)
+    # Try env variable first — Render deployment
     firebase_json = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON")
     if firebase_json:
         try:
@@ -31,12 +23,13 @@ def init_firebase():
         except Exception as e:
             print(f"❌ Firebase env init failed: {e}")
 
-    # Fall back to file (local development)
+    # Fall back to local file — local development only
     service_account_path = os.path.join(
         os.path.dirname(__file__),
         "firebase-service-account.json"
     )
     print(f"🔍 Looking for service account at: {service_account_path}")
+    print(f"🔍 File exists: {os.path.exists(service_account_path)}")
 
     if os.path.exists(service_account_path):
         try:
@@ -46,25 +39,37 @@ def init_firebase():
         except Exception as e:
             print(f"❌ Firebase file init failed: {e}")
     else:
-        print("⚠️  Firebase service account not found — Google OAuth will not work")
+        print("⚠️  Firebase service account not found — Google OAuth disabled")
 
+# ── Run Firebase init BEFORE importing routes ────
 init_firebase()
 
-# ── App ───────────────────────────────────────
+# ── Now safe to import everything else ───────────
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+from starlette.responses import Response
+from database import connect_db
+
+# Routes import after Firebase is ready
+from routes import auth, scan, profile
+
+# ── App ───────────────────────────────────────────
 app = FastAPI(
     title="Food Label Analyzer API",
     description="FSSAI Compliance Verification System",
     version="1.0.0"
 )
 
-# ── Startup ───────────────────────────────────
+# ── Startup ───────────────────────────────────────
 @app.on_event("startup")
 async def startup_event():
     await connect_db()
 
-# ── CORS ──────────────────────────────────────
-# Dynamic CORS — works on any origin
-# Handles localhost, network IP, and deployed domain
+# ── CORS ──────────────────────────────────────────
+# Dynamic CORS — accepts any origin
+# Works on localhost, network IP, and Render/Vercel
 class DynamicCORSMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         origin = request.headers.get("origin", "")
@@ -89,7 +94,7 @@ class DynamicCORSMiddleware(BaseHTTPMiddleware):
 
 app.add_middleware(DynamicCORSMiddleware)
 
-# ── Static Files ──────────────────────────────
+# ── Static Files ──────────────────────────────────
 os.makedirs("uploads", exist_ok=True)
 app.mount(
     "/uploads",
@@ -97,7 +102,7 @@ app.mount(
     name="uploads"
 )
 
-# ── Routes ────────────────────────────────────
+# ── API Routes ────────────────────────────────────
 app.include_router(
     auth.router,
     prefix="/api/auth",
@@ -114,7 +119,7 @@ app.include_router(
     tags=["Profile"]
 )
 
-# ── Health Check ──────────────────────────────
+# ── Health Check ──────────────────────────────────
 @app.get("/")
 def root():
     return {

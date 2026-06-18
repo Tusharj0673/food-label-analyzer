@@ -6,35 +6,10 @@ from auth_utils import (
     verify_password,
     create_token
 )
+from firebase_admin import auth as firebase_auth
 import firebase_admin
-from firebase_admin import credentials, auth
-import os
 
 router = APIRouter()
-
-try:
-    if not firebase_admin._apps:
-        service_account_path = os.path.join(
-            os.path.dirname(__file__),
-            '../firebase-service-account.json'
-        )
-        print(f"🔍 Looking for service account at: {service_account_path}")
-        print(f"🔍 File exists: {os.path.exists(service_account_path)}")
-        
-        cred = credentials.Certificate(service_account_path)
-        firebase_admin.initialize_app(cred)
-        print("✅ Firebase Admin initialized successfully")
-except Exception as e:
-    print(f"❌ Firebase init error: {e}")
-# Initialize Firebase Admin — only once
-if not firebase_admin._apps:
-    cred = credentials.Certificate(
-        os.path.join(
-            os.path.dirname(__file__),
-            '../firebase-service-account.json'
-        )
-    )
-    firebase_admin.initialize_app(cred)
 
 # ── Request Models ──────────────────────────
 
@@ -69,14 +44,21 @@ async def register(data: RegisterRequest):
         "password": hash_password(data.password),
         "authProvider": "email",
         "healthProfile": {
-            "diabetic":     False,
-            "hypertensive": False,
-            "pku":          False,
-            "pregnant":     False
+            "diabetic":           False,
+            "hypertensive":       False,
+            "pku":                False,
+            "pregnant":           False,
+            "lactose_intolerant": False,
+            "pcos":               False,
+            "celiac":             False,
+            "heart":              False,
+            "ibs":                False,
+            "uric_acid":          False
         }
     }
     await db.users.insert_one(user)
     return {"message": "Registration successful"}
+
 
 @router.post("/login")
 async def login(data: LoginRequest):
@@ -104,22 +86,28 @@ async def login(data: LoginRequest):
 
 @router.post("/google")
 async def google_auth(data: GoogleAuthRequest):
-    print(f"📨 Received token length: {len(data.id_token)}")
-    print(f"📨 Token preview: {data.id_token[:50]}...")
-    
+    print(f"📨 Received Google token — length: {len(data.id_token)}")
+
+    # Check Firebase is initialized before using it
+    if not firebase_admin._apps:
+        raise HTTPException(
+            status_code=500,
+            detail="Firebase not initialized — check server configuration"
+        )
+
     try:
-        decoded = auth.verify_id_token(
+        decoded = firebase_auth.verify_id_token(
             data.id_token,
             check_revoked=False,
             clock_skew_seconds=10
         )
-        print(f"✅ Decoded: {decoded.get('email')}")
-        
+        print(f"✅ Token decoded for: {decoded.get('email')}")
+
     except firebase_admin.auth.ExpiredIdTokenError:
         print("❌ Token expired")
         raise HTTPException(
             status_code=401,
-            detail="Token expired"
+            detail="Token expired — please sign in again"
         )
     except firebase_admin.auth.InvalidIdTokenError as e:
         print(f"❌ Invalid token: {e}")
@@ -128,7 +116,7 @@ async def google_auth(data: GoogleAuthRequest):
             detail=f"Invalid token: {str(e)}"
         )
     except Exception as e:
-        print(f"❌ Unknown error: {type(e).__name__}: {e}")
+        print(f"❌ Google auth error: {type(e).__name__}: {e}")
         raise HTTPException(
             status_code=401,
             detail=str(e)
@@ -137,7 +125,7 @@ async def google_auth(data: GoogleAuthRequest):
     email = decoded.get("email")
     name  = decoded.get(
         "name",
-        email.split("@")[0]
+        email.split("@")[0] if email else "User"
     )
 
     user = await db.users.find_one({"email": email})
@@ -149,18 +137,24 @@ async def google_auth(data: GoogleAuthRequest):
             "password":     "",
             "authProvider": "google",
             "healthProfile": {
-                "diabetic":     False,
-                "hypertensive": False,
-                "pku":          False,
-                "pregnant":     False
+                "diabetic":           False,
+                "hypertensive":       False,
+                "pku":                False,
+                "pregnant":           False,
+                "lactose_intolerant": False,
+                "pcos":               False,
+                "celiac":             False,
+                "heart":              False,
+                "ibs":                False,
+                "uric_acid":          False
             }
         }
-        result = await db.users.insert_one(new_user)
+        result  = await db.users.insert_one(new_user)
         user_id = str(result.inserted_id)
-        print(f"✅ New user created: {user_id}")
+        print(f"✅ New Google user created: {user_id}")
     else:
         user_id = str(user["_id"])
-        print(f"✅ Existing user: {user_id}")
+        print(f"✅ Existing Google user: {user_id}")
 
     token = create_token({"userId": user_id})
 
