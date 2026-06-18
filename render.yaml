@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: labeliq-backend
+    runtime: python
+    repo: https://github.com/Tusharj0673/food-label-analyzer.git 
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: MONGODB_URI # Crucial for your database connection
+        fromSecret: MONGODB_URI_SECRET
+      - key: GEMINI_API_KEY
+ # Crucial for AI models
+        fromSecret: GEMINI_API_KEY_SECRET
