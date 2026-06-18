@@ -34,6 +34,12 @@ env/
 .venv
 ENV/
 
+venv_test/
+env/
+.env
+.venv
+ENV/
+
 # ── Environment Variables ───────────────────
 # NEVER upload these — contain API keys
 backend/.env

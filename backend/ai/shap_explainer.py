@@ -5,8 +5,6 @@ _classifier = None
 def get_classifier():
     global _classifier
     if _classifier is None:
-        # Import here — not at module level
-        # This prevents the entire route from crashing
         # if transformers/torch has version issues
         try:
             from transformers import pipeline as hf_pipeline
